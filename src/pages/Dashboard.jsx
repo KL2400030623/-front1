@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { fetchItems, createItem, updateItem, deleteItem } from '../api/mockApi'
 import { parseISO, isBefore, addDays, endOfDay } from 'date-fns'
 import AddModal from '../components/AddModal'
+import SnoozeModal from '../components/SnoozeModal'
 
 function ItemForm({ onSave, editing, onCancel }) {
   const [form, setForm] = useState({ title: '', expiry: '' })
@@ -35,6 +36,7 @@ export default function Dashboard({ user }) {
   const [editing, setEditing] = useState(null)
   const [showAdd, setShowAdd] = useState(false)
   const [newItem, setNewItem] = useState({ title: '', expiry: '', severity: 'low' })
+  const [showSnooze, setShowSnooze] = useState(false)
 
   async function load() {
     setLoading(true)
@@ -87,10 +89,7 @@ export default function Dashboard({ user }) {
     await load()
   }
 
-  async function snoozeAll(defaultDays = 1) {
-    const input = prompt('Snooze all items by how many days?', String(defaultDays))
-    if (!input) return
-    const days = parseInt(input, 10)
+  async function performSnooze(days = 1) {
     if (Number.isNaN(days) || days <= 0) {
       alert('Please enter a valid number of days.')
       return
@@ -106,6 +105,7 @@ export default function Dashboard({ user }) {
         // ignore individual failures
       }
     }
+    setShowSnooze(false)
     await load()
   }
 
@@ -174,10 +174,12 @@ export default function Dashboard({ user }) {
         </div>
 
         <div className="quick-actions">
-          <button className="qbtn" onClick={() => snoozeAll(1)}>Snooze All (1 day)</button>
+          <button className="qbtn" onClick={() => setShowSnooze(true)}>Snooze All</button>
           <button className="qbtn" onClick={() => alert('Settings placeholder')}>Settings</button>
           <div style={{flex:1}} />
         </div>
+
+        <SnoozeModal open={showSnooze} onClose={() => setShowSnooze(false)} onConfirm={performSnooze} defaultDays={1} />
 
         <div className="pro-tip">
           <strong>Pro Tip:</strong> Set reminders 1-2 days before expiry to have time to use or donate the food!

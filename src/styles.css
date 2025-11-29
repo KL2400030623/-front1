@@ -66,4 +66,9 @@ body{font-family:'Inter',Segoe UI,Arial,sans-serif;margin:0;background:linear-gr
 .modal-close{position:absolute;right:10px;top:8px;background:transparent;border:0;color:#cfeefe;font-size:20px;cursor:pointer}
 .modal-body{padding-top:6px}
 
+/* Snooze modal tweaks */
+.modal-body h3{margin:0 0 6px 0}
+.modal-body p{margin:0;color:var(--muted)}
+
+
 
