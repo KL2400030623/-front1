@@ -20,3 +20,11 @@ Suggested next steps:
 - Hook `src/api/mockApi.js` to a real backend (Express / JSON Server / real API).
 - Add stronger validation and password hashing on the server.
 - Add tests and CI, and deploy.
+
+Run both dev server and mock API together:
+
+```powershell
+npm run start:all
+```
+
+This will start `json-server` on port `4000` and the Vite dev server in parallel.

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { fetchItems, createItem, updateItem, deleteItem } from '../api/mockApi'
+import { parseISO, isBefore, addDays, endOfDay } from 'date-fns'
 import AddModal from '../components/AddModal'
 
 function ItemForm({ onSave, editing, onCancel }) {
@@ -48,9 +49,12 @@ export default function Dashboard({ user }) {
 
   function isExpired(it) {
     if (!it.expiry) return false
-    const today = new Date()
-    const ex = new Date(it.expiry + 'T23:59:59')
-    return ex < today
+    try {
+      const ex = endOfDay(parseISO(it.expiry))
+      return isBefore(ex, new Date())
+    } catch (e) {
+      return false
+    }
   }
 
   const userItems = items.filter(i => i.ownerId === user.id)
@@ -83,13 +87,21 @@ export default function Dashboard({ user }) {
     await load()
   }
 
-  async function snoozeAll(days = 1) {
+  async function snoozeAll(defaultDays = 1) {
+    const input = prompt('Snooze all items by how many days?', String(defaultDays))
+    if (!input) return
+    const days = parseInt(input, 10)
+    if (Number.isNaN(days) || days <= 0) {
+      alert('Please enter a valid number of days.')
+      return
+    }
+    if (!confirm(`Snooze all expiries by ${days} day(s)?`)) return
+
     const userItems = items.filter(i => i.ownerId === user.id && i.expiry)
     for (const it of userItems) {
       try {
-        const d = new Date(it.expiry + 'T00:00:00')
-        d.setDate(d.getDate() + days)
-        await updateItem(it.id, { expiry: d.toISOString().slice(0,10) })
+        const newDate = addDays(parseISO(it.expiry), days)
+        await updateItem(it.id, { expiry: newDate.toISOString().slice(0,10) })
       } catch (err) {
         // ignore individual failures
       }

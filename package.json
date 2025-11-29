@@ -7,6 +7,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "mock:server": "json-server --watch db.json --port 4000"
+    ,"start:all": "concurrently \"npm run mock:server\" \"npm run dev\""
   },
   "dependencies": {
     "axios": "^1.4.0",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "vite": "^5.0.0",
-    "json-server": "^0.17.3"
+    "json-server": "^0.17.3",
+    "concurrently": "^8.2.0"
   }
 }
