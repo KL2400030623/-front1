@@ -1,5 +1,10 @@
 # Food Saver — Demo Website
 
+[![CI](https://github.com/KL2400030623/-front1/actions/workflows/ci.yml/badge.svg)](https://github.com/KL2400030623/-front1/actions)
+[![Deploy](https://github.com/KL2400030623/-front1/actions/workflows/deploy.yml/badge.svg)](https://github.com/KL2400030623/-front1/actions)
+
+Live: https://KL2400030623.github.io/-front1/
+
 Small demo React app for tracking food items, showing expiry reminders, and experimenting with CRUD, auth (client-side), and deployments.
 
 Quick start (Windows PowerShell):
