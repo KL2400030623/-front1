@@ -1,6 +1,6 @@
 # Food Saver — Demo Website
 
-This is a small demo React app illustrating UI/UX, routing, validation, auth (client-side), API integration patterns, CRUD operations, local/session storage persistence, and Git usage notes.
+Small demo React app for tracking food items, showing expiry reminders, and experimenting with CRUD, auth (client-side), and deployments.
 
 Quick start (Windows PowerShell):
 
@@ -10,16 +10,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173 in your browser (Vite's default port).
-
-Notes:
-- Authentication is a client-side demo that stores user records in `localStorage` and session state in `sessionStorage` for convenience.
-- The API layer (`src/api/mockApi.js`) uses `localStorage` for persistence and shows where `axios` calls would be placed.
-
-Suggested next steps:
-- Hook `src/api/mockApi.js` to a real backend (Express / JSON Server / real API).
-- Add stronger validation and password hashing on the server.
-- Add tests and CI, and deploy.
+Open `http://localhost:5173` in your browser (Vite's default port).
 
 Run both dev server and mock API together:
 
@@ -27,4 +18,30 @@ Run both dev server and mock API together:
 npm run start:all
 ```
 
-This will start `json-server` on port `4000` and the Vite dev server in parallel.
+This starts `json-server` on port `4000` and Vite in parallel.
+
+Deployment
+---------
+
+This repository includes a GitHub Actions workflow that builds the app and deploys the generated `dist` to GitHub Pages. After pushing to `main` the workflow will publish the site to the `gh-pages` branch. The Pages URL will typically be:
+
+`https://<your-username>.github.io/<repo-name>/`
+
+Badges
+------
+
+Build status (Actions) and Pages will appear in the repository's Actions and Pages tabs after the first push.
+
+Notes
+-----
+
+- Authentication and persistence are client-side for demo purposes only. Do not use this approach for production apps.
+- The API wrapper `src/api/mockApi.js` prefers a local `json-server` but falls back to `localStorage` when the server is not available.
+
+Next steps
+----------
+
+- Add server-side authentication and hashed passwords for production.
+- Expand tests (unit + e2e) and add linting.
+- Replace demo data storage with a real backend.
+

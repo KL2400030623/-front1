@@ -3,6 +3,7 @@ import { fetchItems, createItem, updateItem, deleteItem } from '../api/mockApi'
 import { parseISO, isBefore, addDays, endOfDay } from 'date-fns'
 import AddModal from '../components/AddModal'
 import SnoozeModal from '../components/SnoozeModal'
+import ConfirmModal from '../components/ConfirmModal'
 
 function ItemForm({ onSave, editing, onCancel }) {
   const [form, setForm] = useState({ title: '', expiry: '' })
@@ -37,6 +38,7 @@ export default function Dashboard({ user }) {
   const [showAdd, setShowAdd] = useState(false)
   const [newItem, setNewItem] = useState({ title: '', expiry: '', severity: 'low' })
   const [showSnooze, setShowSnooze] = useState(false)
+  const [confirmState, setConfirmState] = useState({ open: false, message: '', onConfirm: null })
 
   async function load() {
     setLoading(true)
@@ -75,9 +77,19 @@ export default function Dashboard({ user }) {
   }
 
   async function handleDelete(id) {
-    if (!confirm('Delete this item?')) return
-    await deleteItem(id)
-    await load()
+    setConfirmState({
+      open: true,
+      message: 'Delete this item?',
+      onConfirm: async () => {
+        try {
+          await deleteItem(id)
+        } catch (e) {
+          // ignore
+        }
+        setConfirmState(s => ({ ...s, open: false }))
+        await load()
+      }
+    })
   }
 
   async function handleCreate(e) {
@@ -94,19 +106,26 @@ export default function Dashboard({ user }) {
       alert('Please enter a valid number of days.')
       return
     }
-    if (!confirm(`Snooze all expiries by ${days} day(s)?`)) return
 
-    const userItems = items.filter(i => i.ownerId === user.id && i.expiry)
-    for (const it of userItems) {
-      try {
-        const newDate = addDays(parseISO(it.expiry), days)
-        await updateItem(it.id, { expiry: newDate.toISOString().slice(0,10) })
-      } catch (err) {
-        // ignore individual failures
+    // ask for confirmation via modal, actual work happens in onConfirm
+    setConfirmState({
+      open: true,
+      message: `Snooze all expiries by ${days} day(s)?`,
+      onConfirm: async () => {
+        const userItems = items.filter(i => i.ownerId === user.id && i.expiry)
+        for (const it of userItems) {
+          try {
+            const newDate = addDays(parseISO(it.expiry), days)
+            await updateItem(it.id, { expiry: newDate.toISOString().slice(0,10) })
+          } catch (err) {
+            // ignore individual failures
+          }
+        }
+        setShowSnooze(false)
+        setConfirmState(s => ({ ...s, open: false }))
+        await load()
       }
-    }
-    setShowSnooze(false)
-    await load()
+    })
   }
 
   return (
@@ -180,6 +199,13 @@ export default function Dashboard({ user }) {
         </div>
 
         <SnoozeModal open={showSnooze} onClose={() => setShowSnooze(false)} onConfirm={performSnooze} defaultDays={1} />
+
+        <ConfirmModal
+          open={confirmState.open}
+          message={confirmState.message}
+          onCancel={() => setConfirmState(s => ({ ...s, open: false }))}
+          onConfirm={confirmState.onConfirm}
+        />
 
         <div className="pro-tip">
           <strong>Pro Tip:</strong> Set reminders 1-2 days before expiry to have time to use or donate the food!
