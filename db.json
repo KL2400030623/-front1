@@ -1,0 +1,33 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "title": "Curry",
+      "expiry": "2025-12-02",
+      "severity": "high",
+      "ownerId": 123
+    },
+    {
+      "id": 2,
+      "title": "Bread",
+      "expiry": "2025-12-01",
+      "severity": "critical",
+      "ownerId": 123
+    },
+    {
+      "id": 3,
+      "title": "Milk",
+      "expiry": "2025-12-04",
+      "severity": "medium",
+      "ownerId": 123
+    }
+  ],
+  "users": [
+    {
+      "id": 123,
+      "name": "Demo User",
+      "email": "demo@example.com",
+      "password": "demo123"
+    }
+  ]
+}
